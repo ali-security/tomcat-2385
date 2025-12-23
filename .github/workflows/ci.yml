@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: '8'  # Java 7 minimum, but Java 8 is more commonly available
+        distribution: 'temurin'  # Adoptium Temurin (formerly AdoptOpenJDK)
+    
+    - name: Set up Ant
+      uses: s4u/setup-ant@v1
+      with:
+        version: '1.10.14'  # Latest stable version (1.9.8+ required)
+        jdkVersion: '8'
+    
+    - name: Create build.properties
+      run: |
+        echo "base.path=$HOME/tomcat-build-libs" > build.properties
+    
+    - name: Build embed JARs
+      run: ant package embed-jars
+    
+    - name: Run tests
+      run: ant test
+    
+    # - name: Upload tomcat-embed-core JAR
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: tomcat-embed-core
+    #     path: output/embed/tomcat-embed-core*.jar
+    #     retention-days: 3
+    
