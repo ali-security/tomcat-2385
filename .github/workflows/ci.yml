@@ -25,7 +25,7 @@ env:
 
 jobs:
   build:
-    name: build with java 17
+    name: build with java 11
     runs-on: ubuntu-latest
     steps:
     - name: Git Checkout
@@ -49,9 +49,21 @@ jobs:
         name: build-logs
         path: output/build/logs/TEST*.txt
         retention-days: 7
+    - name: Check logs for errors
+      if: always()
+      run: |
+        if ls output/build/logs/TEST*.txt 1> /dev/null 2>&1; then
+          # Check for various error patterns
+          if grep -iE "\b(ERROR|FAILED)\b" output/build/logs/TEST*.txt || \
+             grep -E "(Errors: [1-9]|Failures: [1-9])" output/build/logs/TEST*.txt; then
+            echo "::error::Found errors or failures in test logs"
+            exit 1
+          fi
+        else
+          echo "No test log files found"
+        fi
     - name: Upload jars
       uses: actions/upload-artifact@v4
-      if: always()
       with:
         name: JDK17-ubuntu-jars
         path: output/embed/*.jar
