@@ -21,10 +21,15 @@ jobs:
         distribution: 'temurin'  # Adoptium Temurin (formerly AdoptOpenJDK)
     
     - name: Set up Ant
-      uses: s4u/setup-ant@v1
-      with:
-        version: '1.10.14'  # Latest stable version (1.9.8+ required)
-        jdkVersion: '8'
+      run: |
+        ANT_VERSION=1.10.14
+        wget https://archive.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz
+        tar -xzf apache-ant-${ANT_VERSION}-bin.tar.gz
+        sudo mv apache-ant-${ANT_VERSION} /opt/ant
+        sudo ln -sf /opt/ant/bin/ant /usr/local/bin/ant
+        echo "ANT_HOME=/opt/ant" >> $GITHUB_ENV
+        echo "/opt/ant/bin" >> $GITHUB_PATH
+        ant -version
     
     - name: Create build.properties
       run: |
