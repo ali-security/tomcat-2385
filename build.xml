@@ -1556,6 +1556,12 @@
             <exclude name="org/apache/tomcat/util/net/openssl/ciphers/**" unless="${test.openssl.exists}" />
             <!-- Exclude performance tests. E.g. on systems with slow/inconsistent timing -->
             <exclude name="**/*Performance.java" if="${test.excludePerformance}" />
+            <!-- Exclude SSL tests with expired certificates -->
+            <exclude name="org/apache/tomcat/util/net/TestClientCert*.java" />
+            <exclude name="org/apache/tomcat/util/net/TestCustomSsl.java" />
+            <exclude name="org/apache/tomcat/util/net/TestSsl.java" />
+            <exclude name="org/apache/tomcat/websocket/TestWebSocketFrameClientSSL.java" />
+            <exclude name="org/apache/tomcat/websocket/TestWsWebSocketContainer.java" />
             <!-- Exclude a configurable list of tests -->
             <exclude name="${test.exclude}" />
           </fileset>
